@@ -323,3 +323,162 @@ setState(() => _err = e.message);
 if (mounted) setState(() => _loading = false);
 }
 }
+
+
+Future<void> _biometric() async {
+setState(() => {_loading = true, _err = null});
+try {
+final can =
+await _auth.isDeviceSupported() && await _auth.canCheckBiometrics;
+if (!can) {
+setState(() => _err = 'جهازك لا يدعم البصمة.');
+} else {
+final ok = await _auth.authenticate(
+localizedReason: 'افتح الجلسة ببصمة الجهاز',
+options: const AuthenticationOptions(
+biometricOnly: true,
+stickyAuth: true,
+),
+);
+if (ok && await Vault.isLogged()) {
+if (!mounted) return;
+Navigator.pushReplacement(
+context,
+MaterialPageRoute(builder: (_) => const HomeScreen()),
+);
+} else if (!ok) {
+setState(() => _err = 'لم يتم التحقق بالبصمة.');
+}
+}
+} catch (_) {
+setState(() => _err = 'تعذّر استخدام البصمة.');
+}
+if (mounted) setState(() => _loading = false);
+}
+
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+body: SafeArea(
+child: Column(
+children: [
+AnimatedContainer(
+duration: const Duration(milliseconds: 250),
+height: _isOffline ? 40 : 0,
+width: double.infinity,
+color: Colors.red,
+alignment: Alignment.center,
+child: _isOffline
+? const Text(
+'الرجاء التحقق من الاتصال بالإنترنت',
+style: TextStyle(color: Colors.white),
+)
+    : null,
+),
+Expanded(
+child: ListView(
+padding: const EdgeInsets.all(20),
+children: [
+Row(
+children: [
+const Icon(
+Icons.account_balance,
+color: _primary,
+size: 36,
+),
+const SizedBox(width: 8),
+const Expanded(
+child: Text(
+'بنك الكريمي',
+style: TextStyle(fontWeight: FontWeight.w700),
+),
+),
+],
+),
+const SizedBox(height: 16),
+Container(
+decoration: BoxDecoration(
+color: Colors.white,
+borderRadius: BorderRadius.circular(16),
+),
+padding: const EdgeInsets.all(16),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.stretch,
+children: [
+const Text(
+'رقم المميّز',
+style: TextStyle(
+color: _primary,
+fontWeight: FontWeight.w700,
+),
+),
+const SizedBox(height: 6),
+TextField(
+controller: _member,
+keyboardType: TextInputType.number,
+decoration: const InputDecoration(
+hintText: 'ادخل رقم المميّز',
+),
+),
+const SizedBox(height: 12),
+const Text(
+'كلمة المرور',
+style: TextStyle(
+color: _primary,
+fontWeight: FontWeight.w700,
+),
+),
+const SizedBox(height: 6),
+TextField(
+controller: _pass,
+obscureText: _hide,
+decoration: InputDecoration(
+hintText: 'ادخل كلمة المرور',
+suffixIcon: IconButton(
+icon: Icon(
+_hide ? Icons.visibility : Icons.visibility_off,
+),
+onPressed: () => setState(() => _hide = !_hide),
+),
+),
+),
+const SizedBox(height: 12),
+Row(
+children: [
+IconButton(
+onPressed: _loading ? null : _biometric,
+icon: const Icon(
+Icons.fingerprint,
+size: 30,
+color: _accent,
+),
+),
+const SizedBox(width: 8),
+Expanded(
+child: Row(
+children: [
+Checkbox(
+value: _offlineLogin,
+onChanged: (v) => setState(
+() => _offlineLogin = v ?? false,
+),
+),
+const Text('الدخول بدون إنترنت'),
+const Spacer(),
+TextButton(
+onPressed: () =>
+ScaffoldMessenger.of(
+context,
+).showSnackBar(
+const SnackBar(
+content: Text('ميزة تعليمية.'),
+),
+),
+child: const Text('نسيت كلمة المرور؟'),
+),
+],
+),
+),
+],
+),
+
