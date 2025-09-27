@@ -62,3 +62,102 @@ static Future<void> clearSession() async {
 await del('logged_user');
 }
 "6: زر تبديل إظهار/إخفاء كلمة المرور
+static Future<bool> verifyPassword(String pw) async {
+final salt = await read('pw_salt') ?? '';
+final saved = await read('pw_hash');
+return saved == _hash(pw, salt);
+}
+}
+
+/* ================================== MOCK API ================================== */
+class MockApi {
+// محاكاة طلب شبكة (تأخير + رد)
+static Future<LoginResult> login({
+required String memberId,
+required String password,
+}) async {
+await Future.delayed(const Duration(milliseconds: 700));
+final goodId = await Vault.read('user_id') ?? '';
+final okPw = await Vault.verifyPassword(password);
+if (memberId == goodId && okPw) {
+// أحياناً نطلب OTP (عرض تعليمي)
+final needOtp = (DateTime.now().second % 2 == 0);
+if (needOtp) {
+final otpToken = base64UrlEncode(
+utf8.encode('otp:${DateTime.now().millisecondsSinceEpoch}'),
+);
+return LoginResult(needOtp: true, otpToken: otpToken);
+}
+return LoginResult(needOtp: false);
+}
+throw AuthError('بيانات الدخول غير صحيحة.');
+}
+
+static Future<void> verifyOtp({
+required String token,
+required String code,
+}) async {
+await Future.delayed(const Duration(milliseconds: 600));
+if (code != '000000' && code != '123456') {
+throw AuthError('رمز التحقق غير صحيح.');
+}
+}
+
+static Future<void> changePin({
+required String oldPin,
+required String newPin,
+}) async {
+await Future.delayed(const Duration(milliseconds: 500));
+final ok = await Vault.verifyPassword(oldPin);
+if (!ok) throw AuthError('الرمز الحالي غير صحيح.');
+final salt = await Vault.read('pw_salt') ?? '';
+await Vault.write('pw_hash', Vault._hash(newPin, salt));
+}
+}
+
+class LoginResult {
+final bool needOtp;
+final String? otpToken;
+LoginResult({required this.needOtp, this.otpToken});
+}
+
+class AuthError implements Exception {
+final String message;
+AuthError(this.message);
+@override
+String toString() => message;
+}
+
+/* ==================================== APP ==================================== */
+void main() async {
+WidgetsFlutterBinding.ensureInitialized();
+try {
+await ScreenProtector.preventScreenshotOn();
+await ScreenProtector.protectDataLeakageOn();
+} catch (_) {}
+await Vault.ensureDefaultUser();
+runApp(const UniKuraimiDemo());
+}
+
+class UniKuraimiDemo extends StatefulWidget {
+const UniKuraimiDemo({super.key});
+@override
+State<UniKuraimiDemo> createState() => _AppState();
+}
+
+class _AppState extends State<UniKuraimiDemo> with WidgetsBindingObserver {
+final navKey = GlobalKey<NavigatorState>();
+Timer? _idle;
+@override
+void initState() {
+super.initState();
+WidgetsBinding.instance.addObserver(this);
+}
+
+@override
+void dispose() {
+WidgetsBinding.instance.removeObserver(this);
+_idle?.cancel();
+super.dispose();
+}
+
