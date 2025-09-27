@@ -249,3 +249,77 @@ String? _err;
 final _auth = LocalAuthentication();
 StreamSubscription? _connSub;
 
+@override
+void initState() {
+super.initState();
+_listenConnectivity();
+}
+
+@override
+void dispose() {
+_connSub?.cancel();
+_member.dispose();
+_pass.dispose();
+super.dispose();
+}
+
+void _listenConnectivity() async {
+final current = await Connectivity().checkConnectivity();
+final ConnectivityResult r0 = current is List<ConnectivityResult>
+? (current.isNotEmpty ? current.first : ConnectivityResult.none)
+    : current as ConnectivityResult;
+setState(() => _isOffline = (r0 == ConnectivityResult.none));
+_connSub = Connectivity().onConnectivityChanged.listen((event) {
+final ConnectivityResult r = event is List<ConnectivityResult>
+? (event.isNotEmpty ? event.first : ConnectivityResult.none)
+    : event as ConnectivityResult;
+if (mounted) setState(() => _isOffline = (r == ConnectivityResult.none));
+});
+}
+
+Future<void> _login() async {
+FocusScope.of(context).unfocus();
+setState(() => {_loading = true, _err = null});
+try {
+if (_offlineLogin) {
+if (await Vault.isLogged()) {
+if (!mounted) return;
+Navigator.pushReplacement(
+context,
+MaterialPageRoute(builder: (_) => const HomeScreen()),
+);
+} else {
+setState(() => _err = 'لا توجد جلسة محفوظة لفتحها بدون إنترنت.');
+}
+} else {
+final res = await MockApi.login(
+memberId: _member.text.trim(),
+password: _pass.text.trim(),
+);
+if (res.needOtp) {
+if (!mounted) return;
+final ok = await Navigator.push<bool>(
+context,
+MaterialPageRoute(builder: (_) => OtpScreen(token: res.otpToken!)),
+);
+if (ok == true && mounted) {
+Navigator.pushReplacement(
+context,
+MaterialPageRoute(builder: (_) => const HomeScreen()),
+);
+}
+} else {
+await Vault.saveSession(_member.text.trim());
+if (!mounted) return;
+Navigator.pushReplacement(
+context,
+MaterialPageRoute(builder: (_) => const HomeScreen()),
+);
+}
+}
+} on AuthError catch (e) {
+setState(() => _err = e.message);
+} finally {
+if (mounted) setState(() => _loading = false);
+}
+}
