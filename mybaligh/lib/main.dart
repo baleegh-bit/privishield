@@ -26,6 +26,8 @@ appBarTheme: const AppBarTheme(
 backgroundColor: _primary,
 foregroundColor: Colors.white,
 centerTitle: true,
+
+)
 )
   filledButtonTheme: FilledButtonThemeData(
 style: FilledButton.styleFrom(
@@ -42,4 +44,21 @@ border: OutlineInputBorder(borderRadius: BorderRadius.circular(22)),
 contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
 ),
 );
+
+//-----------------------
+class Vault {
+static const _s = FlutterSecureStorage(
+aOptions: AndroidOptions(encryptedSharedPreferences: true),
+);
+static Future<void> write(String k, String v) => _s.write(key: k, value: v);
+static Future<String?> read(String k) => _s.read(key: k);
+static Future<void> del(String k) => _s.delete(key: k);
+
+static Future<void> saveSession(String user) async {
+await write('logged_user', user);
+}
+
+static Future<void> clearSession() async {
+await del('logged_user');
+}
 
