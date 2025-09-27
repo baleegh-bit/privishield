@@ -809,5 +809,34 @@ class _SettingsState extends State<SettingsScreen> {
               ),
             ),
           ),
+  const Divider(),
+          SwitchListTile(
+            value: _bio,
+            onChanged: (v) => setState(() => _bio = v),
+            title: const Text('انقر لتفعيل بصمة اليد'),
+            activeColor: _primary,
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('إنشاء/تغيير رمز التعريف الشخصي'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ChangePinPage()),
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('الحساب الافتراضي'),
+            subtitle: FutureBuilder(
+              future: Vault.read('account_no'),
+              builder: (_, s) => Text(s.data?.toString() ?? '—'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 
