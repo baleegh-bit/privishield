@@ -1,0 +1,424 @@
+* {
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+#content {
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    background-image: url(movi/img/banner_bg01.jpg);
+    background-repeat: no-repeat;
+    background-position: top right;
+    /* display: flex; */
+    flex-wrap: wrap;
+}
+
+#navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#navbar #nav-left {
+    margin-left: 20px;
+
+}
+
+#navbar #nav-left a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+#navbar #nav-center a:hover {
+    color: #e5e216;
+}
+
+#navbar #nav-center a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 20px;
+    transition: 0.4s;
+}
+
+#nav-raigt {
+    margin-right: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#nav-raigt span {
+    margin-right: 14px;
+    cursor: pointer;
+    font-size: 35px;
+    color: #fff;
+}
+
+#nav-raigt select {
+    background: none;
+    color: #fff;
+    margin-right: 14px;
+    font-size: 20px;
+    transition: 0.4s;
+
+}
+
+#nav-raigt select:hover {
+    color: #333;
+}
+
+#nav-raigt button {
+    background: none;
+    border: none;
+    padding: 15px;
+    font-size: 15px;
+    width: 160px;
+    color: #fff;
+    border-radius: 35px;
+    border: solid #e5e216 3px;
+    font-weight: 700;
+    transform: 0.4s;
+}
+
+#nav-raigt button:hover {
+    background-color: #e5e216;
+    color: #333;
+}
+
+#center {
+    padding: 250px 30px;
+}
+
+#center h2 {
+    color: #e5e216;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+#center h1 {
+    font-size: 33px;
+    color: #fff;
+    font-weight: 600;
+}
+
+#center h1 span {
+    font-size: 33px;
+    color: #e5e216;
+    font-weight: 600;
+}
+
+#div-p p {
+    background-color: #fff;
+    display: inline-block;
+    padding: 7px 11px;
+    font-weight: 800;
+    font-size: 8px;
+    cursor: pointer;
+}
+
+#center button {
+    background: none;
+    border: none;
+    padding: 9px;
+    font-size: 14px;
+    width: 130px;
+    color: #fff;
+    border-radius: 35px;
+    border: solid #e5e216 3px;
+    font-weight: 700;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+#center button:hover {
+    background-color: #e5e216;
+    color: #333;
+}
+
+#main-poster {
+    padding: 70px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    background-image: url(movi/img/pg/services_bg.jpg);
+    background-position: right top;
+    background-repeat: repeat;
+}
+
+#title {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    margin-left: 130px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#title-left p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e5e216;
+}
+
+#title-left h1 {
+    font-size: 40px;
+    color: #fff;
+}
+
+#title-r a {
+    text-decoration: none;
+    color: #fff;
+    margin-left: 10px;
+    background-color: #21232b;
+    padding: 15px;
+    border-radius: 50px;
+    border: solid #333 2px;
+    transition: 0.5s;
+}
+
+#title-r a:focus {
+    border: solid #e5e216 2px;
+}
+
+#card {
+    margin-top: 20px;
+    margin-left: 30px;
+    position: relative;
+    overflow: hidden;
+    width: 300px;
+    height: 439px;
+    border-radius: 14px;
+
+}
+
+#poster {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#poster img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: 0.5s;
+    border-radius: 12px;
+}
+
+#datalest {
+    position: absolute;
+    bottom: -100;
+    left: 0;
+    width: 100%;
+    height: auto;
+    padding: 1.5em 1.5em 2em;
+    backdrop-filter: bulr(16px);
+    background-color: #0000009c;
+    transition: 0.5s;
+
+}
+
+#card:hover #datalest {
+    bottom: 0;
+}
+
+#datalest h1 {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+#datalest p {
+    color: #fff;
+    font-size: 24px;
+
+}
+
+#div-star {
+    display: inline-block;
+}
+
+#div-star input {
+    display: none;
+
+}
+
+#div-star label {
+    float: right;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.3s;
+
+}
+
+#div-star label::before {
+    content: '\2605';
+    font-size: 30px;
+}
+
+#div-star input:checked~label,
+#div-star label:hover,
+#div-star label:hover~label {
+    color: #ff7700;
+    transition: 0.3s;
+}
+
+#live {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 110px;
+    width: 100%;
+    height: 100%;
+    background-image: url(movi/img/pg/live_bg.jpg);
+    background-repeat: no-repeat;
+    background-position: top;
+}
+
+#live #live-left #p1 {
+    color: #eee;
+    font-size: 15px;
+    font-weight: 600;
+
+}
+
+#live #live-left h1 {
+    font-size: 50px;
+    color: #333;
+}
+
+#live #live-left h1 {
+    color: #333;
+    font-size: 40px;
+    font-weight: 800;
+}
+
+#live #live-left h1 span {
+    color: #ff6200;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+#live #live-left button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e216;
+    border: none;
+    padding: 16px;
+    font-size: 19px;
+    width: 165px;
+    color: #333;
+    border-radius: 35px;
+    border: solid #e5e216 3px;
+    font-weight: 700;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+#live #live-left button:hover {
+    background: none;
+    border: #e5e216 solid 2px;
+
+}
+
+#title2 {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#title2 #div-h1-p p {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e5e216;
+    text-align: center;
+}
+
+#title2 #div-h1-p h1 {
+    font-size: 28px;
+    color: #fff;
+
+}
+
+#info {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 60px;
+    width: 100%;
+    height: 100%;
+    background-image: url(movi/img/pg/footer_bg.jpg);
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+#info #logo-div a {
+    text-decoration: none;
+    color: #e5e216;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+#info #info-r a {
+    text-decoration: none;
+    color: #ddd;
+    font-size: 18px;
+    margin-right: 15px;
+    font-weight: 700;
+    transition: 0.5s;
+
+}
+
+#info #info-r a:hover {
+    color: #e5e216;
+}
+
+#info #info-r input {
+    padding: 12px;
+    border: none;
+    background-color: #21232b;
+    border-radius: 40px;
+    width: 200px;
+    border: solid #e5e216;
+    color: #ddd;
+    font-size: 21px;
+}
+
+#part5 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #21232b;
+
+}
+
+#part5 h3 {
+    color: #ddd;
+}
+
+#part5 a {
+    text-decoration: none;
+    color: #e5e216;
+
+}
