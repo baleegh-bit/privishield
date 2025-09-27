@@ -27,3 +27,12 @@ backgroundColor: _primary,
 foregroundColor: Colors.white,
 centerTitle: true,
 )
+  filledButtonTheme: FilledButtonThemeData(
+style: FilledButton.styleFrom(
+backgroundColor: _accent,
+  foregroundColor: Colors.white,
+  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+),
+),
+ 
