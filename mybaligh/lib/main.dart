@@ -482,3 +482,332 @@ child: const Text('نسيت كلمة المرور؟'),
 ],
 ),
 
+/* ==================================== OTP ==================================== */
+class OtpScreen extends StatefulWidget {
+  final String token;
+  const OtpScreen({super.key, required this.token});
+  @override
+  State<OtpScreen> createState() => _OtpState();
+}
+
+class _OtpState extends State<OtpScreen> {
+  final _otp = TextEditingController();
+  bool _loading = false;
+  String? _err;
+  Future<void> _verify() async {
+    setState(() => {_loading = true, _err = null});
+    try {
+      await MockApi.verifyOtp(token: widget.token, code: _otp.text.trim());
+      final user = await Vault.read('user_id') ?? '';
+      await Vault.saveSession(user);
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } on AuthError catch (e) {
+      setState(() => _err = e.message);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('التحقق OTP')),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text('أدخل رمز التحقق (للتجربة: 000000 أو 123456)'),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _otp,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            decoration: const InputDecoration(
+              hintText: 'رمز التحقق',
+              counterText: '',
+            ),
+            onSubmitted: (_) => _verify(),
+          ),
+          if (_err != null) ...[
+            const SizedBox(height: 6),
+            Text(_err!, style: const TextStyle(color: Colors.red)),
+          ],
+          const SizedBox(height: 10),
+          FilledButton(
+            onPressed: _loading ? null : _verify,
+            child: _loading
+                ? const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text('تأكيد'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/* ==================================== HOME ==================================== */
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+  @override
+  State<HomeScreen> createState() => _HomeState();
+}
+
+class _HomeState extends State<HomeScreen> {
+  int _tab = 0;
+  bool _hide = true;
+  String _name = '';
+  String _acct = '';
+  String _currency = 'YER';
+  String _balance = '0';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHeader();
+  }
+
+  Future<void> _loadHeader() async {
+    _name = await Vault.read('display_name') ?? 'عميلنا العزيز';
+    _acct = await Vault.read('account_no') ?? '********';
+    _currency = await Vault.read('currency') ?? 'YER';
+    _balance = await Vault.read('balance') ?? '0';
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _logout() async {
+    await Vault.clearSession();
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (_) => false,
+    );
+  }
+
+  void _open(String title) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          appBar: AppBar(title: Text(title)),
+          body: Center(child: Text(' $title')),
+        ),
+      ),
+    );
+  }
+
+  final _actions = const [
+    {'icon': Icons.shopping_bag, 'label': 'الدفع والسداد (حاسب)'},
+    {'icon': Icons.account_balance, 'label': 'الخدمات البنكية'},
+    {'icon': Icons.currency_exchange, 'label': 'الكريمي إكسبريس'},
+    {'icon': Icons.qr_code, 'label': 'خدمات القسائم'},
+    {'icon': Icons.settings_suggest, 'label': 'خدمة التمويل'},
+    {'icon': Icons.paid, 'label': 'فلوس'},
+    {'icon': Icons.credit_card, 'label': 'خدمات البطاقة'},
+    {'icon': Icons.apps, 'label': 'خدمات أخرى'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_name, overflow: TextOverflow.ellipsis),
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+            icon: const Icon(Icons.settings),
+          ),
+          IconButton(onPressed: _logout, icon: const Icon(Icons.logout)),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _tab,
+        onTap: (i) => setState(() => _tab = i),
+        selectedItemColor: _primary,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'بياناتي'),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: _primary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.description, color: Colors.white70),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        _acct,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => setState(() => _hide = !_hide),
+                      icon: Icon(
+                        _hide ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.account_balance_wallet,
+                      color: Colors.white70,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      _hide ? '**** $_currency' : '$_balance $_currency',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                FilledButton(
+                  onPressed: () => _open('عرض البيان'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: _primary,
+                  ),
+                  child: const Text('عرض البيان'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'خدمي إلى ...',
+            ),
+          ),
+          const SizedBox(height: 12),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _actions.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: .95,
+            ),
+            itemBuilder: (_, i) {
+              final a = _actions[i];
+              return _Tile(
+                icon: a['icon'] as IconData,
+                label: a['label'] as String,
+                onTap: () => _open(a['label'] as String),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Tile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  const _Tile({required this.icon, required this.label, required this.onTap});
+  @override
+  Widget build(BuildContext context) => InkWell(
+    borderRadius: BorderRadius.circular(16),
+    onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: _primary, size: 26),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/* ================================= SETTINGS ================================= */
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+  @override
+  State<SettingsScreen> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<SettingsScreen> {
+  bool _bio = true;
+  double _sessionMins = _idleLockSeconds / 60;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('الإعدادات')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          ListTile(title: const Text('اللغة'), trailing: const Text('العربية')),
+          const Divider(),
+          ListTile(
+            title: const Text('مدة الجلسة'),
+            subtitle: Text('${_sessionMins.toStringAsFixed(0)} دقيقة'),
+            trailing: SizedBox(
+              width: 160,
+              child: Slider(
+                min: 1,
+                max: 30,
+                divisions: 29,
+                value: _sessionMins,
+                onChanged: (v) => setState(() => _sessionMins = v),
+              ),
+            ),
+          ),
+
+
