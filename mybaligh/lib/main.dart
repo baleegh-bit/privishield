@@ -35,4 +35,11 @@ backgroundColor: _accent,
   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
 ),
 ),
- 
+inputDecorationTheme: InputDecorationTheme(
+filled: true,
+fillColor: Colors.white,
+border: OutlineInputBorder(borderRadius: BorderRadius.circular(22)),
+contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+),
+);
+
