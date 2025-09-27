@@ -161,3 +161,91 @@ _idle?.cancel();
 super.dispose();
 }
 
+
+@override
+void didChangeAppLifecycleState(AppLifecycleState s) {
+if (s == AppLifecycleState.paused || s == AppLifecycleState.inactive) {
+_lockNow();
+}
+}
+
+void _resetIdle() {
+_idle?.cancel();
+_idle = Timer(const Duration(seconds: _idleLockSeconds), _lockNow);
+}
+
+Future<void> _lockNow() async {
+await Vault.clearSession();
+navKey.currentState?.popUntil((r) => r.isFirst);
+}
+
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Uni Kuraimi-like',
+debugShowCheckedModeBanner: false,
+theme: appTheme(),
+locale: const Locale('ar'),
+supportedLocales: const [Locale('ar'), Locale('en')],
+localizationsDelegates: const [
+GlobalMaterialLocalizations.delegate,
+GlobalWidgetsLocalizations.delegate,
+GlobalCupertinoLocalizations.delegate,
+],
+navigatorKey: navKey,
+builder: (_, child) => Directionality(
+textDirection: TextDirection.rtl,
+child: GestureDetector(
+behavior: HitTestBehavior.translucent,
+onTap: _resetIdle,
+onPanDown: (_) => _resetIdle(),
+child: child,
+),
+),
+home: const _Gate(),
+);
+}
+}
+
+class _Gate extends StatefulWidget {
+const _Gate();
+@override
+State<_Gate> createState() => _GateState();
+}
+
+class _GateState extends State<_Gate> {
+late Future<bool> _f;
+@override
+void initState() {
+super.initState();
+_f = Vault.isLogged();
+}
+
+@override
+Widget build(BuildContext c) {
+return FutureBuilder<bool>(
+future: _f,
+builder: (_, s) =>
+s.data == true ? const HomeScreen() : const LoginScreen(),
+);
+}
+}
+
+/* =================================== LOGIN =================================== */
+class LoginScreen extends StatefulWidget {
+const LoginScreen({super.key});
+@override
+State<LoginScreen> createState() => _LoginState();
+}
+
+class _LoginState extends State<LoginScreen> {
+final _member = TextEditingController();
+final _pass = TextEditingController();
+bool _hide = true,
+_loading = false,
+_isOffline = false,
+_offlineLogin = false;
+String? _err;
+final _auth = LocalAuthentication();
+StreamSubscription? _connSub;
+
