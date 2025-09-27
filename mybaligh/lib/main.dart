@@ -61,4 +61,4 @@ await write('logged_user', user);
 static Future<void> clearSession() async {
 await del('logged_user');
 }
-
+"6: زر تبديل إظهار/إخفاء كلمة المرور
