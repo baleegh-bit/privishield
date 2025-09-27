@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style3.css">
+    <style>
+    </style>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#img-search').hide();
+            $('.imgg').hide();
+            $('#btn-hide').hide();
+            $('#img-search2').hide();
+
+
+            $('#btn-show').click(function () {
+                $('.imgg').show();
+                $('#btn-hide').show();
+            })
+            $('#btn-hide').click(function () {
+                $('.imgg').hide();
+                $('#btn-hide').hide();
+            })
+            $('#btn-ser').click(function () {
+                var Mname = $('#input-ser').val();
+                nameKeys = ['action', 'bamsi', 'osman', 'sharoqan', 'orhan'];
+
+                for (i = 0; i < nameKeys.length; i++) {
+                    if (nameKeys[i] == Mname) {
+                        $('#img-search').show(400);
+                        $('.imgs').hide();
+                        $('#img-search2').hide();
+                        $('#btn-show').hide();
+                        break;
+                    }
+
+
+                    if (Mname == 'horror') {
+                        $('#img-search2').show(400);
+                        $('.imgs').hide();
+                        $('#img-search').hide();
+                        $('#btn-show').hide();
+                        break;
+
+                    }
+
+
+                    // else {
+                    //     if (i == 4) {
+                    //         alert("No The Filem Not found: ")
+                    //         break;
+                    //     }
+
+                    // }
+                }
+            })
+
+        })
+    </script>
+</head>
