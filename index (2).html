@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style2.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UserName</title>
+    <!-- <script src="java.js"></script> -->
+    <script src="jquery-3.6.0.min.js"></script>
+    <script>
+        var users = [];
+        var passwords = [];
+        var emails = [];
+        $(document).ready(function () {
+            $('h5').hide();
+            $('.new-user').hide();
+            $('.btn-us').mousedown(function () {
+                var na = $('#name').val();
+                var us = $('#pass').val();
+
+                for (i = 0; i < users.length; i++) {
+                    if (na == users[i] && us == passwords[i]) {
+                        $('a').attr({
+                            'href': 'index3.html',
+                            'target': '_blank',
+                            'color': 'red',
+                        })
+                    }
+                    else {
+                        $('#name').val('Worng userName or password')
+                        $('a').attr({
+                            'href': 'index2.html',
+                            'target': '_self',
+                            'color': 'red',
+                        })
+                    }
+                }
+            })
+
+            $('.new').click(function () {
+                $('.new-user').show(1000);
+            })
+            $('.btn-us-n').click(function () {
+                var n = $('#n-name').val();
+                var p = $('#n-pass').val();
+                var e = $('#email').val();
+                users.push(n);
+                passwords.push(p);
+                emails.push(e);
+                $('h5').show();
+
+            })
+
+            //    if(users[0]=="ali"){alert("amjd khlale")}  
+
+
+        })   
+    </script>
+</head>
+
+<body>
+
+    <div class="parent">
+        <div class="user">
+
+            <input type="text" id="name">
+            <label for="name">اسم المستخدم</label>
+            <br>
+            <input type="password" id="pass">
+            <label for="pass">كلمة المرور</label>
+            <br>
+            <button class="btn-us"><a href="" id="hf" style="text-decoration: none;">تسجيل الدخول</a></button>
+            <button class="new">ليس لدي حساب</button>
+            <button class="new" type="submit">انشاء حساب جديد</button>
+
+        </div>
+        <div class="new-user">
+            <input type="text" id="n-name">
+            <label for="n-name">اسم المستخدم</label>
+            <br>
+            <input type="email" id="email">
+            <label for="email"> االايميل</label>
+            <br>
+            <input type="password" id="n-pass">
+            <label for="n-pass">كلمة المرور</label>
+            <br>
+            <button class="btn-us-n" type="submit">إنشاء حساب</button>
+            <h5>تم انشاء حساب يمكنك الان تسجيل الدخول</h5>
+
+            <!-- <button class="btn-us-n"><a href="" id="hf" type="submit">تسجيل الدخول</a></button> -->
+
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+</html>
